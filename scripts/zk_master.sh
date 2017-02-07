@@ -66,7 +66,7 @@ make install &> /dev/null
 ldconfig
 
 ## mesos development
-apt-get install libboost-dev libboost-thread-dev libssh-dev protobuf-compiler -y -qq
+apt-get install libboost-dev libboost-thread-dev libboost-random-dev libssh-dev protobuf-compiler -y -qq
 /usr/lib/x86_64-linux-gnu/libboost_system.so.1.58.0 /usr/lib/x86_64-linux-gnu/libboost_system.so
 /usr/lib/x86_64-linux-gnu/libboost_filesystem.so.1.58.0 /usr/lib/x86_64-linux-gnu/libboost_filesystem.so
 
