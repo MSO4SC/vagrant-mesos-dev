@@ -48,7 +48,10 @@ Vagrant.configure("2") do |config|
 	# install gui and mpi development tools
 	config.vm.provision "shell", path: "scripts/gui.sh"
 	config.vm.provision "shell", path: "scripts/dev-mpi.sh"
-	config.vm.provision "file", source: "files/eclipse.desktop", destination: "eclipse.desktop"
+	config.vm.provision "file", source: "files/eclipse.desktop", destination: "/home/vagrant/Desktop/eclipse.desktop"
+	config.vm.provision "file", source: "scripts/clean-eclipse.sh", destination: "/home/vagrant/Desktop/clean-eclipse.sh"
+	config.vm.provision "shell", inline: "dos2unix /home/vagrant/Desktop/clean-eclipse.sh &> /dev/null"
+	config.vm.provision "shell", inline: "chmod +x /home/vagrant/Desktop/clean-eclipse.sh"
 	
 	# install script to run mesos easily
 	config.vm.provision "file", source: "scripts/zk_master_up.sh", destination: "up.sh"
