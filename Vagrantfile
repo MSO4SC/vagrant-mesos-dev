@@ -21,20 +21,40 @@
 # you're doing.
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu1604"
-  config.vm.synced_folder "../../Projects", "/home/vagrant/Projects"
+  config.vm.synced_folder "../../../Projects", "/home/vagrant/Projects"
   
-  config.vm.provision "shell", path: "scripts/set_host.sh", args: "192.168.56.10 node1"
+  config.vm.provision "shell", path: "scripts/basic-config.sh"
+  
+  #remove first localhost nodeX line in hosts file
+  config.vm.provision "shell", inline: "echo -e \"$(sed '1d' /etc/hosts)\n\" > /etc/hosts"
+  
+  #set all hosts
+  config.vm.provision "shell", path: "scripts/set-host.sh", args: "192.168.56.10 node1"
 #  config.vm.provision "shell", path: "scripts/set_host.sh", args: "192.168.56.11 node2"
   
+  ################################################################################################################
+  ################################## zookeeper & mesos node (master & agent) #####################################
+  ################################################################################################################
   config.vm.define "node1" do |node1|
     config.vm.network "private_network", ip: "192.168.56.10"
 	config.vm.hostname = "node1"
 	
-	config.vm.provision "file", source: "scripts/zk_master_up.sh", destination: "up.sh"
-	config.vm.provision "file", source: "files/eclipse.desktop", destination: "eclipse.desktop"
-	config.vm.provision "shell", path: "scripts/zk_master.sh", args: "node1 192.168.56.10 1"
+	# install zookeeper
+	config.vm.provision "shell", path: "scripts/zookeeper-install.sh", args: "node1 192.168.56.10 1 &> /dev/null"
+	
+	# install mesos and development dependencies
+	config.vm.provision "shell", path: "../mesos-hpc-framework/scripts/build-dependencies.sh", args: "&> /dev/null"
+	
+	# install gui and mpi development tools
 	config.vm.provision "shell", path: "scripts/gui.sh"
 	config.vm.provision "shell", path: "scripts/dev-mpi.sh"
+	config.vm.provision "file", source: "files/eclipse.desktop", destination: "eclipse.desktop"
+	
+	# install script to run mesos easily
+	config.vm.provision "file", source: "scripts/zk_master_up.sh", destination: "up.sh"
+	config.vm.provision "shell", inline: "dos2unix /home/vagrant/up.sh &> /dev/null"
+	config.vm.provision "shell", inline: "chmod +x /home/vagrant/up.sh"
+	
 	
 	config.vm.provider "virtualbox" do |vb|
 		# Display the VirtualBox GUI when booting the machine
@@ -47,6 +67,7 @@ Vagrant.configure("2") do |config|
         vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold", 1000]
 	end
   end
+  ################################################################################################################
   
   # config.vm.define "node2" do |node2|
     # config.vm.network "private_network", ip: "192.168.56.11"
