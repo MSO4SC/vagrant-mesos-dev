@@ -30,3 +30,8 @@ mv eclipse /opt
 chown -R vagrant:vagrant /opt/eclipse
 ln -s /opt/eclipse/eclipse /usr/bin/
 mv /home/vagrant/eclipse.desktop /home/vagrant/Desktop/
+
+#cpplint and clang-format
+sudo apt-get install -y clang-format
+sudo wget -q https://raw.githubusercontent.com/google/styleguide/gh-pages/cpplint/cpplint.py -P /usr/bin/
+sudo chmod a+x /usr/bin/cpplint.py

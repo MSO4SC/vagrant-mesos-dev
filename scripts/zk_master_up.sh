@@ -16,8 +16,8 @@
 
 sudo /opt/zookeeper-*/bin/zkServer.sh start
 tmux new-session -d -s mesosphere -n master 'sudo mesos-master --work_dir=/var/lib/mesos --zk=zk://node1:2181/mesos --quorum=1'
-tmux new-window -n agent 'sudo mesos-agent --work_dir=/var/lib/mesos --master=zk://node1:2181/mesos --executor_environment_variables="/home/vagrant/Projects/mso4sc/mesos-hpc-framework/slurm_executor/etc/config.json"'
+tmux new-window -n agent 'sudo mesos-agent --work_dir=/var/lib/mesos --master=zk://node1:2181/mesos --executor_environment_variables="/home/vagrant/Projects/mso4sc/mesos-hpc-framework/slurm_executor/etc/config.json" --resources=file:///home/vagrant/Projects/mso4sc/mesos-hpc-framework/slurm_executor/etc/resources.txt --attributes="hpc:ft2"' 
 tmux new-window -n framework
-tmux send-keys -t 'mesosphere:2' 'cd /home/vagrant/Projects/mso4sc/mesos-hpc-framework/hpc_framework/Debug' Enter
-tmux send-keys -t 'mesosphere:2' 'DEFAULT_PRINCIPAL= ./hpc-framework --master=192.168.56.10:5050'
+tmux send-keys -t 'mesosphere:2' 'cd /home/vagrant/Projects/mso4sc/mesos-hpc-framework/hpc_framework/Release' Enter
+tmux send-keys -t 'mesosphere:2' 'DEFAULT_PRINCIPAL= ./hpc-framework --master=zk://node1:2181/mesos  --role=hpc'
 tmux attach-session 
